@@ -1,0 +1,106 @@
+app.js
+import React from 'react';
+import Search from './components/Search';
+import Recipes from './components/Recipes';
+import './App.css';
+const YOUR_API_KEY="9106661177ae3feec1676a371b5ddedd";
+class App extends React.Component {
+  
+  constructor(props)
+  {
+    super(props);
+    this.searchRecipe=this.searchRecipe.bind(this);
+    this.state={
+      recipes: []
+    }
+  }
+
+searchRecipe(recipename)
+{
+  fetch(`https://www.food2fork.com/api/search?key=${YOUR_API_KEY}&q=${recipename}`)
+  .then(response=>response.json())
+  //.then(data=>console.log("fectched json data",data))
+  .then(data=>this.setState({
+    recipes: data.recipes
+  }))
+  
+  // 
+}
+
+render()
+{
+  return(
+    <div className="App">
+      <header>
+        <h1>Recipe</h1>
+      </header>
+      <Search onSubmit={this.searchRecipe} />
+      <Recipes recipes={this.state.recipes}/>
+    </div>
+  );
+}
+}
+export default App;
+
+
+recipe.js
+import React from 'react';
+import Recipe from './Recipe';
+
+function Recipes(props)
+{
+     return(
+       <div>
+         {
+            props.recipes.map(recipe=><Recipe key={recipe.recipe_id} data={recipe}/>)
+         }
+       </div>
+     );
+}
+
+export default Recipes;
+
+
+contents.js
+import React from 'react';
+
+
+
+function Contents(props)
+{   return (
+           <div>
+             <img src ={props.data.image_url} alt={props.data.recipe_id} />
+             <p>{props.data.title}</p>
+             <form>
+             <button type="submit" formaction={props.data.f2f_url}>More details</button>
+             </form>
+          </div>
+          );
+}
+
+
+
+export default Contents;
+
+
+searchbar.js
+
+import React from 'react';
+
+function Search(props)
+{
+    return(
+    <form onSubmit={(e)=>{
+        e.preventDefault();
+        props.onSubmit(e.target.recipename.value);
+    }}>
+        <div>
+            <h1>Enter recipe</h1>
+            <input type="text" name="recipename"></input>
+            <button type="submit">Search</button>
+        </div>
+    </form>
+    );
+}
+
+export default Search;
